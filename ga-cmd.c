@@ -1,25 +1,16 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-
-int compute_code(char *, int, int);
-int base32_decode(char *, char *, int);
-
-int pam_get_item(void *x, int y, void **z) { return 0; }
-int pam_set_item(void *x, int y, void **z) { return 0; }
+#include "ga-lib.h"
 
 int main()
 {
 char s[] = { SEED };
-char *p = s;
+int verf_code;
 
-while (*p)
-{
-	*p = *p ^ 0b01010101;
-	p++;
-}
+verf_code = gen_verf_code(s, time(0) / 30);
 
-char x[11];
-printf("%6.6d\n", compute_code(x, base32_decode(s, x, 16), time(0) / 30));
+printf("%6.6d\n", verf_code);
 
-return 0;
+return EXIT_SUCCESS;
 }
