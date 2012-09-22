@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if [ ! $1 ]; then
-	echo Need Seed \($0 \<seed\>\)
+	echo Need Key \($0 \<key\>\)
 	exit 1
 fi
 
@@ -12,38 +12,6 @@ else
 	echo git pull
 fi
 
-if [ ! -d bin ]; then
-	mkdir bin
-fi
+rm ga-cmd.o
 
-GA=google-authenticator/libpam
-
-echo Compiling ga-test
-gcc -o bin/ga-test -DTESTING -std=gnu99 ${GA}/hmac.c ${GA}/sha1.c ${GA}/base32.c ${GA}/pam_google_authenticator.c ga-lib.c ga-test.c
-if [ $? -ne 0 ]; then
-	echo Compile of ga-test failed
-	exit 1
-fi
-
-bin/ga-test
-if [ $? -ne 0 ]; then
-	echo Tests failed
-	exit 1
-fi
-
-echo Compiling prockey
-gcc -o bin/prockey -DTESTING -std=gnu99 ${GA}/hmac.c ${GA}/sha1.c ${GA}/base32.c ${GA}/pam_google_authenticator.c ga-lib.c prockey.c
-if [ $? -ne 0 ] ; then
-	echo Compile of prockey failed
-	exit 1
-fi
-
-SEED=`bin/prockey $1`
-if [ $? -ne 0 ] ; then
-	echo Execution of prockey failed
-	exit 1
-fi
-
-echo Compiling ga-cmd
-gcc -o bin/ga-cmd -DTESTING -DSEED=${SEED} -std=gnu99 ${GA}/hmac.c ${GA}/sha1.c ${GA}/base32.c ${GA}/pam_google_authenticator.c ga-lib.c ga-cmd.c
-strip bin/ga-cmd
+make all KEY=$1
