@@ -5,10 +5,17 @@
 
 int main()
 {
-char s[] = { SEED };
+char key_from_compile[] = { SEED };
+char key_from_file[17];
+char *key;
 int verf_code;
 
-verf_code = gen_verf_code(s, time(0) / 30);
+reveal_key(key_from_compile);
+
+key = (load_key(get_config_filename(".ga-cmd"), key_from_file,
+	sizeof(key_from_file)) == 0) ? key_from_file : key_from_compile;
+
+verf_code = gen_verf_code(key, time(0) / 30);
 
 printf("%6.6d\n", verf_code);
 
