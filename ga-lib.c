@@ -14,7 +14,9 @@ int base32_decode(char *, char *, int);
 int pam_get_item(void *x, int y, void **z) { return 0; }
 int pam_set_item(void *x, int y, void **z) { return 0; }
 
-int verf_key_len(char *key)
+/*-----------------------------------------------------------------*/
+int
+verf_key_len(char *key)
 {
 if (strlen(key) != 16)
 	{
@@ -24,14 +26,18 @@ if (strlen(key) != 16)
 return 0;
 }
 
-int verf_key_chars(char *key)
+/*-----------------------------------------------------------------*/
+int
+verf_key_chars(char *key)
 {
 /* TODO: Validate all characters */
 
 return 0;
 }
 
-int verf_key(char *key)
+/*-----------------------------------------------------------------*/
+int
+verf_key(char *key)
 {
 if (verf_key_len(key))
 	{
@@ -46,7 +52,9 @@ if (verf_key_chars(key))
 return 0;
 }
 
-int hide_key(char *key, char *out, int len)
+/*-----------------------------------------------------------------*/
+int
+hide_key(char *key, char *out, int len)
 {
 /* TODO: Use len to prevent buffer overrun */
 
@@ -79,7 +87,9 @@ req_len += 5;
 return req_len;
 }
 
-int reveal_key(char *key)
+/*-----------------------------------------------------------------*/
+int
+reveal_key(char *key)
 {
 while (*key)
 	{
@@ -90,7 +100,9 @@ while (*key)
 return 0;
 }
 
-int gen_verf_code(char *key, int timeval)
+/*-----------------------------------------------------------------*/
+int
+gen_verf_code(char *key, int timeval)
 {
 int key_parm;
 int verf_code;
@@ -102,7 +114,9 @@ verf_code = compute_code(x, key_parm, timeval);
 return verf_code;
 }
 
-int load_key(char *filename, char *keybuf, int keybuf_len)
+/*-----------------------------------------------------------------*/
+int
+load_key(char *filename, char *keybuf, int keybuf_len)
 {
 int result = 0;
 FILE *fp;
@@ -147,7 +161,9 @@ else
 return result;
 }
 
-char * get_config_filename(char *file)
+/*-----------------------------------------------------------------*/
+char
+*get_config_filename(char *file)
 {
 char *homedir = NULL;
 char *result = NULL;

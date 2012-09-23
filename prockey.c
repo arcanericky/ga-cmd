@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include "ga-lib.h"
 
-int main(int argc, char *argv[])
+/*-----------------------------------------------------------------*/
+int
+main(int argc, char *argv[])
 {
 char *key;
 char *p;

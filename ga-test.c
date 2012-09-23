@@ -3,12 +3,16 @@
 #include <string.h>
 #include "ga-lib.h"
 
-void show_result(int status, char *desc)
+/*-----------------------------------------------------------------*/
+void
+show_result(int status, char *desc)
 {
 printf("%s: %s\n", status ? "FAIL" : "PASS", desc);
 }
 
-int TEST_get_config_filename()
+/*-----------------------------------------------------------------*/
+int
+TEST_get_config_filename()
 {
 char *fn;
 int result = 1;
@@ -20,7 +24,9 @@ show_result(result, "get_config_filename()");
 return result;
 }
 
-int TEST_load_key()
+/*-----------------------------------------------------------------*/
+int
+TEST_load_key()
 {
 char *test_key = "7777777777777777";
 char *key_filename = "keyfile";
@@ -81,7 +87,9 @@ umask(saved_umask);
 return result;
 }
 
-int TEST_reveal_key()
+/*-----------------------------------------------------------------*/
+int
+TEST_reveal_key()
 {
 char key[] = { 0x64,0x67,0x66,0x61,0x60,0x63,0x62,0x6D,0x6C,0x65,0x64,0x67,
 	0x66,0x61,0x60,0x63,0x00 };
@@ -92,7 +100,9 @@ show_result(result, "reveal_key(char [])");
 return 0;
 }
 
-int TEST_hide_key()
+/*-----------------------------------------------------------------*/
+int
+TEST_hide_key()
 {
 int result;
 char hidden_key[85];
@@ -111,7 +121,9 @@ show_result(result, "hide_key(\"1234567890123456\", hidden_key, 85)");
 return 0;
 }
 
-int TEST_gen_verf_code()
+/*-----------------------------------------------------------------*/
+int
+TEST_gen_verf_code()
 {
 char key[] = "A1B2C3D4E5F61234";
 int result;
@@ -122,7 +134,9 @@ show_result(result, "gen_verf_code()");
 return (0);
 }
 
-int main()
+/*-----------------------------------------------------------------*/
+int
+main()
 {
 typedef int (*ptr_test_func)(void);
 

@@ -3,7 +3,9 @@
 #include <time.h>
 #include "ga-lib.h"
 
-int main()
+/*-----------------------------------------------------------------*/
+int
+main()
 {
 char key_from_compile[] = { SEED };
 char key_from_file[17];
