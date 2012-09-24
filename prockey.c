@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "ga-lib.h"
+#include "verf.h"
 
 /*-----------------------------------------------------------------*/
 int

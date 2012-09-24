@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "ga-lib.h"
+#include "keyhide.h"
+#include "cfgfile.h"
+#include "verf.h"
+#include "codegen.h"
 
 /*-----------------------------------------------------------------*/
 int

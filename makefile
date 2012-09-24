@@ -1,5 +1,6 @@
 GA=google-authenticator/libpam
 GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o
+OBJS=keyhide.o verf.o codegen.o cfgfile.o
 
 .SUFFIXES:
 
@@ -23,16 +24,16 @@ pam_google_authenticator.o: $(GA)/pam_google_authenticator.c
 ga-cmd.o: ga-cmd.c bin/prockey
 	gcc -c -std=gnu99 -DSEED=`bin/prockey $(KEY)` $<
 
-bin/prockey: $(GA_OBJS) ga-lib.o prockey.o
+bin/prockey: $(GA_OBJS) $(OBJS) prockey.o
 	@mkdir -p $(@D)
 	gcc -o $@ $^
 
-bin/ga-cmd: $(GA_OBJS) ga-lib.o ga-cmd.o
+bin/ga-cmd: $(GA_OBJS) $(OBJS) ga-cmd.o
 	@mkdir -p $(@D)
 	gcc -o $@ $^
 	strip $@
 
-bin/ga-test: $(GA_OBJS) ga-lib.o ga-test.o
+bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o
 	@mkdir -p $(@D)
 	gcc -o $@ $^
 	bin/ga-test
