@@ -12,6 +12,9 @@ else
 	echo git pull
 fi
 
-rm ga-cmd.o
+if [ -e gmd-cmd.o ]
+then
+	rm gmd-cmd.o
+fi
 
 make all KEY=$1
