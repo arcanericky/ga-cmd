@@ -17,4 +17,4 @@ then
 	rm gmd-cmd.o
 fi
 
-make all KEY=$1
+make all KEY=`echo $1|tr '[A-Z]' '[a-z]'`
