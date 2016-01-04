@@ -2,14 +2,6 @@ GA=google-authenticator/libpam
 GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o
 OBJS=keyhide.o verf.o codegen.o cfgfile.o
 
-uname_S := $(shell sh -c 'uname -s 2>/dev/null || echo not')
-ifeq ($(uname_S),Linux)
-	TRUE_BIN=/bin/true
-endif
-ifeq ($(uname_S),Darwin)
-	TRUE_BIN=/usr/bin/true
-endif
-
 .SUFFIXES:
 
 .SUFFIXES: .o .c .h
@@ -47,13 +39,13 @@ bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o
 	bin/ga-test
 
 prockey: bin/prockey
-	@(${TRUE_BIN})
+	@true
 
 ga-cmd: bin/ga-cmd
-	@(${TRUE_BIN})
+	@true
 
 ga-test: bin/ga-test
-	@(${TRUE_BIN})
+	@true
 
 all: prockey ga-test ga-cmd
 
