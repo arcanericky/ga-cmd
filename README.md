@@ -1,4 +1,4 @@
-###Google Authenticator - Command Line
+### Google Authenticator - Command Line
 
 It's like Google Authenticator, but on a command line using your Linux box.
 
@@ -10,10 +10,10 @@ The extremely small program is built by leveraging the Google Authenticator sour
 
 **Warning: Once you've built this program, protect it. It contains your authentication seed (though it's loosely obscured) and anyone that can execute it can use your verification codes.**
 
-####Background
+#### Background
 The Google Authentication codes are standardized message authentication codes called HMACs. Read more about them starting at the [Wikipedia page for HMAC](https://www.google.com "Wikipedia: HMAC"). You can find more source code for generating HMACS by searching here on [GitHub for HMAC](https://github.com/search?q=hmac "GitHub: HMAC"). This project was done for the fun of bending Google's PAM code to generate an HMAC.
 
-####Building
+#### Building
 The git repository contains submodules. Clone this repo then setup the submodules with:
 ```
 $ git clone https://github.com/arcanericky/ga-cmd.git
@@ -27,7 +27,7 @@ $ ./build.sh <16 character seed>
 ```
 The source will compile, a test routine is built and verified, then the ga-cmd is built and deposited at bin/ga-cmd.
 
-####Using
+#### Using
 Simply run the executable and it will emit a 6 digit verification code:
 ```
 $ bin/ga-cmd
