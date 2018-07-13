@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#define SECRETKEY 0b00000110
+
 /*-----------------------------------------------------------------*/
 int
 hide_key(char *key, char *out, int len)
@@ -19,7 +21,7 @@ while (*key)
 {
 	if (out)
 		{
-		sprintf(byte, "0x%2.2X,", *key ^ 0b01010101);
+		sprintf(byte, "0x%2.2X,", *key ^ SECRETKEY);
 		strcat(out, byte);
 		}
 	req_len += 5;
@@ -42,7 +44,7 @@ reveal_key(char *key)
 {
 while (*key)
 	{
-	*key = *key ^ 0b01010101;
+	*key = *key ^ SECRETKEY;
 	key++;
 	}
 
