@@ -6,7 +6,7 @@ if [ ! $1 ]; then
 fi
 
 if [ ! -d google-authenticator ]; then
-	git clone https://code.google.com/p/google-authenticator/
+	git clone https://github.com/google/google-authenticator.git
 else
 	#(cd google-authenticator; git pull)
 	echo git pull
