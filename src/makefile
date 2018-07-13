@@ -39,13 +39,13 @@ bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o
 	bin/ga-test
 
 prockey: bin/prockey
-	@/bin/true
+	@true
 
 ga-cmd: bin/ga-cmd
-	@/bin/true
+	@true
 
 ga-test: bin/ga-test
-	@/bin/true
+	@true
 
 all: prockey ga-test ga-cmd
 
