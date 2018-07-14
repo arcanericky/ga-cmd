@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define SECRETKEY 0b00000110
+#define SECRETKEY 0b01010101
 
 /*-----------------------------------------------------------------*/
 int
