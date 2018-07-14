@@ -1,7 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "cfgfile.h"
+#include "ga-lib.h"
 
 /*-----------------------------------------------------------------*/
 void

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "verf.h"
+#include "ga-lib.h"
 
 /*-----------------------------------------------------------------*/
 int
