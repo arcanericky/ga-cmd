@@ -20,6 +20,10 @@ $ git clone https://github.com/arcanericky/ga-cmd.git
 $ git submodule init
 $ git submodule update
 ```
+Install the PAM development library. On Ubuntu do this with:
+```
+$ sudo apt-get install libpam0g-dev
+```
 Once you've done this, switch into the src directory and execute build.sh
 ```
 $ cd src
