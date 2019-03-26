@@ -1,9 +1,14 @@
-### Google Authenticator - Command Line
+# Google Authenticator - Command Line
 
 It's like Google Authenticator, but on a command line using your Linux box.
 
+[![Build Status](https://travis-ci.com/arcanericky/ga-cmd.svg?branch=master)](https://travis-ci.com/arcanericky/ga-cmd)
+
 ![ga-cmd](https://raw.github.com/wiki/arcanericky/ga-cmd/images/ga-cmd.png "ga-cmd execution")
 
+---
+
+## What It Does
 Ever try to sign onto Google only to be asked for a verification code? You sigh as calculate how many calories it'll take you to grab the phone from the other side of the table, or worse, the need to walk to the other side of the room. This program solves that, giving you access to that verification code from your Linux command line.
 
 The extremely small program is built by leveraging the [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) source itself - specifically, the PAM code. The build script takes your authenticator key, slightly obfuscates it, then creates an executable that can be used to output your 6 digit verification code every time it is executed.

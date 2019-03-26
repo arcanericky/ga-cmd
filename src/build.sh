@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 if [ ! $1 ]; then
 	echo Need Key \($0 \<key\>\)
 	exit 1
