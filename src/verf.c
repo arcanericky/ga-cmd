@@ -4,7 +4,11 @@
 int
 verf_key_len(char *key)
 {
-if (strlen(key) != 16)
+int keylen;
+
+keylen = strlen(key);
+
+if (keylen < 16 || keylen > 64)
 	{
 	return 1;
 	}

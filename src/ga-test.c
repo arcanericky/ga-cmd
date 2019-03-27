@@ -128,11 +128,19 @@ return 0;
 int
 TEST_gen_verf_code()
 {
-char key[] = "A1B2C3D4E5F61234";
+char key16[] = "A1B2C3D4E5F61234";
+char key32[] = "A1B2C3D4E5F61234A1B2C3D4E5F61234";
+char key64[] = "A1B2C3D4E5F61234A1B2C3D4E5F61234A1B2C3D4E5F61234A1B2C3D4E5F61234";
 int result;
 
-result = gen_verf_code(key, 10000) == 535137 ? 0 : 1;
-show_result(result, "gen_verf_code()");
+result = gen_verf_code(key16, 10000) == 535137 ? 0 : 1;
+show_result(result, "gen_verf_code() with 16 bytes");
+
+result = gen_verf_code(key32, 10000) == 408928 ? 0 : 1;
+show_result(result, "gen_verf_code() with 32 bytes");
+
+result = gen_verf_code(key64, 10000) == 158469 ? 0 : 1;
+show_result(result, "gen_verf_code() with 64 bytes");
 
 return (0);
 }

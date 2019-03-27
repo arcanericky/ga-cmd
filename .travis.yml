@@ -3,9 +3,10 @@ language: c
 git:
   depth: 1
 
-before_install:
-  - sudo apt-get install -y libpam0g-dev
-
 script:
-  - git submodule init && git submodule update
   - cd src && ./build.sh 1234567890123456
+
+addons:
+  apt:
+    packages:
+    - libpam0g-dev
