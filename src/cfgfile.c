@@ -37,7 +37,7 @@ if (fp != NULL)
 			memset(keybuf, 0, keybuf_len);
 			bytes_read = fread(keybuf, sizeof(char), keybuf_len - 1, fp);
 			fclose(fp);
-			if (bytes_read != 16)
+			if (bytes_read < 16 || bytes_read > 64)
 				{
 				result = 1;
 				}

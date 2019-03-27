@@ -11,7 +11,8 @@ int
 main()
 {
 char key_from_compile[] = { SEED };
-char key_from_file[17];
+// 64 characters + null terminator
+char key_from_file[65];
 char *key;
 int verf_code;
 

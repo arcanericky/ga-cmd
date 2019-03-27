@@ -1,5 +1,6 @@
-GA=google-authenticator/libpam
-GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o
+GA=google-authenticator-libpam
+GA_SRC=$(GA)/src
+GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o util.o
 OBJS=keyhide.o verf.o codegen.o cfgfile.o
 
 .SUFFIXES:
@@ -9,17 +10,23 @@ OBJS=keyhide.o verf.o codegen.o cfgfile.o
 .c.o :
 	gcc -c $< 
 
-hmac.o: $(GA)/hmac.c
-	gcc -c -std=gnu99 $<
+$(GA)/config.h:
+	(cd $(GA) && ./bootstrap.sh && ./configure)
 
-sha1.o: $(GA)/sha1.c
-	gcc -c -std=gnu99 $<
+hmac.o: $(GA_SRC)/hmac.c $(GA)/config.h
+	gcc -c -std=gnu99 -I $(GA) $<
 
-base32.o: $(GA)/base32.c
-	gcc -c -std=gnu99 $<
+sha1.o: $(GA_SRC)/sha1.c $(GA)/config.h
+	gcc -c -std=gnu99 -I $(GA) $<
 
-pam_google_authenticator.o: $(GA)/pam_google_authenticator.c
-	gcc -c -std=gnu99 -DTESTING $<
+base32.o: $(GA_SRC)/base32.c $(GA)/config.h
+	gcc -c -std=gnu99 -I $(GA) $<
+
+util.o: $(GA_SRC)/util.c $(GA)/config.h
+	gcc -c -std=gnu99 -I $(GA) $<
+
+pam_google_authenticator.o: $(GA_SRC)/pam_google_authenticator.c $(GA)/config.h
+	gcc -c -std=gnu99 -DTESTING -I $(GA) $<
 
 ga-cmd.o: ga-cmd.c bin/prockey
 	gcc -c -std=gnu99 -DSEED=`bin/prockey $(KEY)` $<
@@ -51,4 +58,6 @@ all: prockey ga-test ga-cmd
 
 clean:
 	rm -rf bin
-	rm *.o
+	rm -f *.o
+	rm -f config.h
+	(cd $(GA) && make clean)

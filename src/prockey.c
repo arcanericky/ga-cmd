@@ -10,7 +10,10 @@ main(int argc, char *argv[])
 {
 char *key;
 char *p;
-char hidden_key[85];
+// 64 characters + null terminator transforms to 4 character + ","
+//   representation of each character. Last character a null instead
+//   of a ","
+char hidden_key[(65*5)];
 
 if (argc < 2)
 	{

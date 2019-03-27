@@ -2,21 +2,16 @@
 
 set -e
 
-if [ ! $1 ]; then
-	echo Need Key \($0 \<key\>\)
+if [ ! "$1" ]; then
+	echo Need Key \("$0" \<key\>\)
 	exit 1
 fi
 
-if [ ! -d google-authenticator ]; then
-	git clone https://github.com/google/google-authenticator.git
-else
-	#(cd google-authenticator; git pull)
-	echo git pull
-fi
+GACMD="bin/ga-cmd.o"
 
-if [ -e gmd-cmd.o ]
+if [ -e "$GACMD" ]
 then
-	rm gmd-cmd.o
+	rm "$GACMD"
 fi
 
-make all KEY=`echo $1|tr '[A-Z]' '[a-z]'`
+make all KEY="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
