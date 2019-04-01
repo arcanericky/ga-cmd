@@ -1,52 +1,105 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "cfgfile.h"
+
 /*-----------------------------------------------------------------*/
 int
-load_key(char *filename, char *keybuf, int keybuf_len)
+proc_file(char *tag_request, FILE *fp, char *keybuf, int keybuf_len)
 {
-int result = 0;
-FILE *fp;
+char linebuf[1024];
+int result;
 struct stat s;
 
-if (filename == NULL || keybuf == NULL)
+if (fstat(fileno(fp), &s) || s.st_mode & (S_IRWXO | S_IRWXG))
 	{
-	return 1;
+	result = CFG_INVALID_FILE_PERMS;
 	}
-
-fp = fopen(filename, "r");
-if (fp != NULL)
+else
 	{
-	if (fstat(fileno(fp), &s))
+	result = CFG_MISC_ERROR;
+
+	while (fgets(linebuf, sizeof(linebuf), fp) != NULL)
 		{
-		result = 1;
-		}
-	else
-		{
-		if (s.st_mode & (S_IRWXO | S_IRWXG))
+		int buflen;
+		char *tag;
+		char *key;
+
+		// Trim newline
+		buflen = strlen(linebuf) - 1;
+		if (linebuf[buflen] == '\n')
 			{
-			result = 1;
+			linebuf[buflen] = '\0';
+			}
+
+		// Skip long lines
+		if (strlen(linebuf) == sizeof(linebuf) - 1)
+			{
+			char *retcode;
+
+			do
+				{
+				retcode = fgets(linebuf, sizeof(linebuf), fp);
+				} while (strlen(linebuf) == sizeof(linebuf) - 1 && retcode != NULL);
 			}
 		else
 			{
-			int bytes_read;
-			memset(keybuf, 0, keybuf_len);
-			bytes_read = fread(keybuf, sizeof(char), keybuf_len - 1, fp);
-			fclose(fp);
-			if (bytes_read < 16 || bytes_read > 64)
+			tag = strtok(linebuf, "=");
+			key = strtok(NULL, "\n");
+
+			if (tag != NULL && key != NULL)
 				{
-				result = 1;
+				if (tag_request == NULL
+					|| strlen(tag_request) == 0
+					|| strcmp(tag, tag_request) == 0)
+					{
+					strncpy(keybuf, key, keybuf_len);
+					result = CFG_KEY_RETRIEVED;
+					break;
+					}
 				}
 			}
 		}
 	}
+
+	return result;
+}
+
+/*-----------------------------------------------------------------*/
+/* Returns:
+ * CFG_KEY_RETRIEVED: key retrieved
+ * CFG_MISC_ERROR: misc error
+ * CFG_FILE_OPEN_ERROR: file not opened
+ * CFG_INVALID_FILE_PERMS: invalid file permissions
+ */
+int
+load_key_by_tag(char *tag_request, char *filename, char *keybuf, int keybuf_len)
+{
+int result = CFG_KEY_RETRIEVED;
+FILE *fp;
+
+if (keybuf == NULL || keybuf_len < 65)
+	{
+	result = CFG_MISC_ERROR;
+	}
 else
 	{
-	result = 1;
+	*keybuf = '\0';
+
+	fp = fopen(filename, "r");
+	if (!fp)
+		{
+		result = CFG_FILE_OPEN_ERROR;
+		}
+	else
+		{
+		result = proc_file(tag_request, fp, keybuf, keybuf_len);
+		fclose(fp);
+		}
 	}
 
 return result;

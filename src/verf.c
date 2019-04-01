@@ -1,5 +1,9 @@
 #include <string.h>
 
+#include "verf.h"
+
+int base32_decode(char *, char *, int);
+
 /*-----------------------------------------------------------------*/
 int
 verf_key_len(char *key)
@@ -21,8 +25,15 @@ int
 verf_key_chars(char *key)
 {
 /* TODO: Validate all characters */
+int retval = 0;
+char x[65];
 
-return 0;
+if (base32_decode(key, x, strlen(key)) < 0)
+	{
+	retval = 1;
+	};
+
+return retval;
 }
 
 /*-----------------------------------------------------------------*/
@@ -31,13 +42,13 @@ verf_key(char *key)
 {
 if (verf_key_len(key))
 	{
-	return 1;
+	return VERF_BAD_LEN;
 	}
 
 if (verf_key_chars(key))
 	{
-	return 2;
+	return VERF_BAD_CONTENT;
 	}
 
-return 0;
+return VERF_OK;
 }

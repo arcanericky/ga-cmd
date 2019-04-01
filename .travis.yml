@@ -4,9 +4,17 @@ git:
   depth: 1
 
 script:
-  - cd src && ./build.sh 1234567890123456
+  - cd src
+  - make test
+  - make clean && ./build.sh 1234567890123456
+  - make clean && ./build.sh && mkdir release && cp bin/ga-cmd release
+  - make codecov
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash) -X gcov
 
 addons:
   apt:
     packages:
     - libpam0g-dev
+    - gcovr

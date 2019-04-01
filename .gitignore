@@ -1,3 +1,9 @@
 *.o
 .vscode/
 bin/
+
+# gcov
+*.gcno
+*.gcda
+*.gcov
+coverage*.html
