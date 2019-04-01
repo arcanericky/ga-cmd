@@ -1,29 +1,21 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
-#include "keyhide.h"
 #include "cfgfile.h"
-#include "verf.h"
-#include "codegen.h"
+#include "outputcode.h"
+
+#define VERF_ERROR_PREFIX "Key for %s does not pass verification for "
 
 /*-----------------------------------------------------------------*/
 int
-main()
+main(int argc, char *argv[])
 {
-char key_from_compile[] = { SEED };
-// 64 characters + null terminator
-char key_from_file[65];
-char *key;
-int verf_code;
+#ifndef HMACKEY
+#define HMACKEY ""
+#endif
 
-reveal_key(key_from_compile);
+int exitcode;
+char key_from_compile[] = { HMACKEY };
 
-key = (load_key(get_config_filename(".ga-cmd"), key_from_file,
-	sizeof(key_from_file)) == 0) ? key_from_file : key_from_compile;
+exitcode = output_code_from_args(argc, argv, key_from_compile, stdout, get_config_filename);
 
-verf_code = gen_verf_code(key, time(0) / 30);
-
-printf("%6.6d\n", verf_code);
-
-return EXIT_SUCCESS;
+return exitcode;
 }

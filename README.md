@@ -3,49 +3,101 @@
 It's like Google Authenticator, but on a command line using your Linux box.
 
 [![Build Status](https://travis-ci.com/arcanericky/ga-cmd.svg?branch=master)](https://travis-ci.com/arcanericky/ga-cmd)
+[![codecov](https://codecov.io/gh/arcanericky/ga-cmd/branch/master/graph/badge.svg)](https://codecov.io/gh/arcanericky/ga-cmd)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-![ga-cmd](https://raw.github.com/wiki/arcanericky/ga-cmd/images/ga-cmd.png "ga-cmd execution")
+```
+$ ga-cmd
+123456
 
----
+$ ga-cmd my-fave-site
+654321
+```
+
 
 ## What It Does
-Ever try to sign onto Google only to be asked for a verification code? You sigh as calculate how many calories it'll take you to grab the phone from the other side of the table, or worse, the need to walk to the other side of the room. This program solves that, giving you access to that verification code from your Linux command line.
+Ever try to sign onto Google only to be asked for a verification code? You sigh as calculate how many calories it'll take you to grab the phone from the other side of the table, or worse, the need to walk to the other side of the room. This application solves that, giving you access to that verification code from your Linux command line.
 
-The extremely small program is built by leveraging the [Google Authenticator PAM Module](https://github.com/google/google-authenticator-libpam) source itself. The build script takes your authenticator key, slightly obfuscates it, then creates an executable that can be used to output your 6 digit verification code every time it is executed.
+The extremely small application is built by leveraging the [Google Authenticator PAM Module](https://github.com/google/google-authenticator-libpam) source itself. The build script takes your authenticator key, slightly obfuscates it, then creates an executable that can be used to output your 6 digit verification code every time it is executed.
 
-**Warning: Once you've built this program, protect it. It contains your authentication seed (though it's loosely obscured) and anyone that can execute it can use your verification codes.**
+## Compatibility
+This application outputs HMAC codes. These are compatible with a number of services include [**Google**](https://accounts.google.com/signin), [**GitHub**](https://github.com/login), [**Dropbox**](https://www.dropbox.com/en_GB/login), [**AWS**](https://aws.amazon.com/marketplace/management/signin), and probably any other service that implements HMAC codes. If you use this application for a service not listed here, please let me know or file an [Issue](https://github.com/arcanericky/ga-cmd/issues) or [Pull Request](https://github.com/arcanericky/ga-cmd/pulls) to add it.
 
-#### Background
-The Google Authentication codes are standardized message authentication codes called HMACs. Read more about them starting at the [Wikipedia page for HMAC](https://www.google.com "Wikipedia: HMAC"). You can find more source code for generating HMACS by searching here on [GitHub for HMAC](https://github.com/search?q=hmac "GitHub: HMAC"). This project was done for the fun of bending Google's PAM code to generate an HMAC.
+### Background
+The Google Authentication codes are standardized message authentication codes called HMACs. Read more about them starting at the [Wikipedia page for HMAC](https://en.wikipedia.org/wiki/HMAC). You can find more source code for generating HMACS by searching here on [GitHub for HMAC](https://github.com/search?q=hmac "GitHub: HMAC"). This project was done for the fun of bending Google's PAM code to generate an HMAC.
 
-#### Building
+### Building
+
+**Warning: If you build this application with an internal key, protect the executable and don't distribute it. It contains your authentication key which must be kept private (though it's loosely obscured), and anyone that can execute the application can use your verification codes.**
+
 The git repository contains submodules. Clone this repo then setup the submodules with:
 ```
 $ git clone https://github.com/arcanericky/ga-cmd.git
 $ cd ga-cmd
-$ git submodule init
-$ git submodule update
+$ git submodule update --init --recursive
 ```
 Install the PAM development library. On Ubuntu do this with:
 ```
-$ sudo apt-get install libpam0g-dev
+$ sudo apt-get install -y libpam0g-dev
 ```
-Once you've done this, switch into the `src` directory and execute `build.sh`.
+**Optional**: If you want to generate code coverage reports using the makefile `coverage` target, install [gcovr](http://www.gcovr.com).
+```
+$ sudo apt-get install -y gcovr
+```
+Once you've done this, switch into the `src` directory and execute `build.sh`. If you want the application to contain a single internal key for a single service, specify the key on the command line. Otherwise, just execute `build.sh` and use the external configuration file.
+
+Building without an internal key:
 ```
 $ cd src
-$ ./build.sh <16 to 64 character seed>
+$ ./build.sh
 ```
-The source will compile, a test routine is built and verified, then the `ga-cmd` is built and deposited at `bin/ga-cmd`.
+Building with an internal key:
+```
+$ cd src
+$ ./build.sh <16 to 64 character key>
+```
 
-#### Using
-Run the executable and it will emit a 6 digit verification code:
+The source will compile, test routines are built and verified, then the `ga-cmd` is built and deposited at `bin/ga-cmd`.
+
+### Configuration File
+Multiple keys can be added, removed, and changed through a configuration file that resides at `$HOME/.ga-cmd`. The format is one key per line, each line containing the key name followed by `=` followed by the key. No spaces around the `=`. The general format is:
+```
+name=key
+```
+An example file would be
+```
+google=1234567890123456
+github=0011223344556677
+dropbox=99887766554433221100aa
+```
+This configuration file contains your keys which must be kept private. **Do not share this file or its contents.** Because this file contains sensitive information, the application will not use it if the permissions are not restrictive enough and give an error reflecting this. The file should be owner read/write only. Group and Other/World should not have access. A file with proper permissions will look like
+```
+ls -l ~/.ga-cmd
+-rw------- 1 username username 114 Apr 20 13:37 /home/username/.ga-cmd
+```
+Issuing the command `chmod 600 ~/.ga-cmd` apply the proper permissions.
+
+### Using
+If the application was built with an internal key, running the executable will emit a 6 digit verification code for the key:
 ```
 $ bin/ga-cmd
 123456
 ```
-Check the verification code against your official Google Authenticator app. If it's wrong, check the time on your computer (it's used to calculate the verification code). If the time on the computer doesn't match the time on your phone, sync them and try again. If it still doesn't work, odds are you entered an incorrect seed when you ran `build.sh`.
 
-Even better, pipe its output to a clipboard utility such as `xclip` and paste the result into the verification code entry box.
+Running the application with a single argument will cause it to ignore the internal key (if built with one), lookup the key in the key configuration file, then generate a verification code based on the key. If the applicaton was not built with an internal key, the first key in the configuration file will be used. For example, using the above configuration file to generate a verification code for the entry named `github` would be
+```
+$ bin/ga-cmd github
+654321
+```
+Note these lookups are **case sensitive**.
+```
+$ bin/ga-cmd GITHUB
+Could not find key for GITHUB in /home/username/.ga-cmd.
+```
+
+Check the verification code against whichever application you normally used to generate HMAC codes, such as [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) or [Authy](https://authy.com/). If it's wrong, check the time on your computer (it's used to calculate the verification code). If the time on the computer doesn't match the time on your phone, sync them and try again. If it still doesn't work, odds are you entered an incorrect key when you ran `build.sh`.
+
+Even better, pipe the output to a clipboard utility such as `xclip` and paste the result into the verification code entry box.
 ```
 $ bin/ga-cmd | xclip -sel clipboard
 ```

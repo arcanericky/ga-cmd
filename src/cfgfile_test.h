@@ -1,0 +1,1 @@
+int TEST_load_key_by_tag();

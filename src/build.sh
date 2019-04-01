@@ -3,8 +3,7 @@
 set -e
 
 if [ ! "$1" ]; then
-	echo Need Key \("$0" \<key\>\)
-	exit 1
+	echo "Building without internal key"
 fi
 
 GACMD="bin/ga-cmd.o"
@@ -14,4 +13,5 @@ then
 	rm "$GACMD"
 fi
 
+make clean
 make all KEY="$(echo "$1" | tr '[:upper:]' '[:lower:]')"
