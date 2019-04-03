@@ -291,35 +291,44 @@ int
 main()
 {
 int exit_code = EXIT_SUCCESS;
-
 typedef int (*ptr_test_func)(void);
+struct test_routine {
+	ptr_test_func test_func;
+	char *description;
+};
+struct test_routine *test_routine_stepper;
+struct test_routine test_routines[] = {
+	{ TEST_gen_verf_code, "TEST_gen_verf_code" },
+	{ TEST_hide_and_reveal_key, "TEST_hide_and_reveal_key" },
+	{ TEST_get_config_filename, "TEST_get_config_filename" },
+	{ TEST_load_key_by_tag, "TEST_load_key_by_tag" },
+	{ TEST_key_verf, "TEST_key_verf" },
+	{ TEST_pam_overrides, "TEST_pam_overrides" },
+	{ TEST_output_code_from_args, "TEST_output_code_from_args"},
+	{ NULL, NULL }
+};
 
-ptr_test_func *test_func;
-ptr_test_func test_funcs[] =
+test_routine_stepper = test_routines;
+while ((*test_routine_stepper).test_func != NULL)
 	{
-	TEST_gen_verf_code,
-	TEST_hide_and_reveal_key,
-	TEST_get_config_filename,
-	TEST_load_key_by_tag,
-	TEST_key_verf,
-	TEST_pam_overrides,
-	TEST_output_code_from_args,
-	NULL
-	};
-
-test_func = test_funcs;
-while (*test_func != NULL)
-{
 	int ret;
+	char *text_result;
 
-	ret = (*test_func)();
+	ret = (*test_routine_stepper).test_func();
 	if (ret)
 		{
 		exit_code = EXIT_FAILURE;
+		text_result = "FAILED";
+		}
+	else
+		{
+		text_result = "PASSED";
 		}
 
-	test_func++;
-}
+	printf("%s: %s\n", text_result, (*test_routine_stepper).description);
+
+	test_routine_stepper++;
+	}
 
 return exit_code;
 }
