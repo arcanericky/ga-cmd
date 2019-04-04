@@ -1,8 +1,8 @@
 GA=google-authenticator-libpam
 GA_SRC=$(GA)/src
 GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o util.o
-OBJS=keyhide.o verf.o codegen.o cfgfile.o outputcode.o
-SRCS=keyhide.c verf.c codegen.c cfgfile.c outputcode.c
+OBJS=keyhide.o verf.o codegen.o cfgfile.o outputcode.o version.o
+SRCS=keyhide.c verf.c codegen.c cfgfile.c outputcode.c version.c
 
 .SUFFIXES:
 
@@ -18,7 +18,7 @@ $(GA)/config.h:
 	gcc -c -std=gnu99 $(CFLAGS) -DTESTING -I $(GA) $<
 
 ga-cmd.o: ga-cmd.c bin/prockey
-	gcc -c -std=gnu99 -DHMACKEY=`bin/prockey $(KEY)` $<
+	gcc -c -std=gnu99 -DHMACKEY=`bin/prockey $(KEY)` -DVERSION=\"$(shell sh scripts/get-version.sh)\" $<
 
 bin/prockey: $(GA_OBJS) $(OBJS) prockey.o
 	@mkdir -p $(@D)
@@ -29,7 +29,7 @@ bin/ga-cmd: $(GA_OBJS) $(OBJS) ga-cmd.o
 	gcc -o $@ $^
 	strip $@
 
-bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o cfgfile_test.o
+bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o cfgfile_test.o version_test.o
 	@mkdir -p $(@D)
 	gcc -o $@ -fprofile-arcs $^
 

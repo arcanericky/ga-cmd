@@ -7,6 +7,7 @@
 #include "cfgfile_test.h"
 #include "ga-lib.h"
 #include "outputcode.h"
+#include "version_test.h"
 
 int pam_get_item(void *x, int y, void **z);
 int pam_set_item(void *x, int y, void **z);
@@ -304,7 +305,8 @@ struct test_routine test_routines[] = {
 	{ TEST_load_key_by_tag, "TEST_load_key_by_tag" },
 	{ TEST_key_verf, "TEST_key_verf" },
 	{ TEST_pam_overrides, "TEST_pam_overrides" },
-	{ TEST_output_code_from_args, "TEST_output_code_from_args"},
+	{ TEST_output_code_from_args, "TEST_output_code_from_args" },
+	{ TEST_version_option, "TEST_version_option" },
 	{ NULL, NULL }
 };
 
