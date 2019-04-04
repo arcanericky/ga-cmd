@@ -18,3 +18,12 @@ addons:
     packages:
     - libpam0g-dev
     - gcovr
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: bin/ga-cmd
+  skip_cleanup: true
+  draft: true
+  on:
+    tags: true
