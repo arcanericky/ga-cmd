@@ -1,0 +1,1 @@
+void show_test_result(int, char *);

@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #include "cfgfile.h"
+#include "ga-test.h"
 
 char *test_data =
     "bigconglomerate=1234567890123456\n"
@@ -23,6 +25,22 @@ void
 show_fail_result(char *display_text)
 {
     printf("FAIL: %s\n", display_text);
+}
+
+
+/*-----------------------------------------------------------------*/
+int
+TEST_get_config_filename()
+{
+char *fn;
+int result = 1;
+
+fn = get_config_filename("test");
+result = fn == NULL;
+show_test_result(result, "get_config_filename()");
+free(fn);
+
+return result;
 }
 
 int TEST_load_key_by_tag()

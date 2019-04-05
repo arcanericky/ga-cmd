@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#include "keyhide.h"
 #include "verf.h"
-#include "ga-lib.h"
 
 /*-----------------------------------------------------------------*/
 int

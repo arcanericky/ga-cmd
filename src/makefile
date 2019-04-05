@@ -3,6 +3,7 @@ GA_SRC=$(GA)/src
 GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o util.o
 OBJS=keyhide.o verf.o codegen.o cfgfile.o outputcode.o version.o
 SRCS=keyhide.c verf.c codegen.c cfgfile.c outputcode.c version.c
+OBJS_TEST=ga-test.o cfgfile_test.o version_test.o keyhide_test.o verf_test.o codegen_test.o outputcode_test.o
 
 .SUFFIXES:
 
@@ -29,7 +30,7 @@ bin/ga-cmd: $(GA_OBJS) $(OBJS) ga-cmd.o
 	gcc -o $@ $^
 	strip $@
 
-bin/ga-test: $(GA_OBJS) $(OBJS) ga-test.o cfgfile_test.o version_test.o
+bin/ga-test: $(GA_OBJS) $(OBJS) $(OBJS_TEST)
 	@mkdir -p $(@D)
 	gcc -o $@ -fprofile-arcs $^
 
