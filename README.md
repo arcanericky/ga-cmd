@@ -31,7 +31,7 @@ This application outputs HMAC codes. These are compatible with a number of servi
 - ...and execute: `./ga-cmd myfavesite`
 
 ### Background
-The Google Authentication codes are standardized message authentication codes called HMACs. Read more about them starting at the [Wikipedia page for HMAC](https://en.wikipedia.org/wiki/HMAC). You can find more source code for generating HMACS by searching here on [GitHub for HMAC](https://github.com/search?q=hmac "GitHub: HMAC"). This project was done for the fun of bending Google's PAM code to generate an HMAC.
+These authentication codes are standardized message authentication codes derived from the Time-based One-Time Password algorithm (TOTP). Read more about them starting at the [Wikipedia page for TOTP](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm). You can find more source code for generating HMACS by searching here on [GitHub for TOTP](https://github.com/search?q=totp). This project initially started for the fun of bending Google's PAM code to generate a TOTP code.
 
 ### Building
 
