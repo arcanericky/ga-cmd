@@ -23,6 +23,13 @@ The extremely small application is built by leveraging the [Google Authenticator
 ## Compatibility
 This application outputs HMAC codes. These are compatible with a number of services include [**Google**](https://accounts.google.com/signin), [**GitHub**](https://github.com/login), [**Dropbox**](https://www.dropbox.com/en_GB/login), [**AWS**](https://aws.amazon.com/marketplace/management/signin), and probably any other service that implements HMAC codes. If you use this application for a service not listed here, please let me know or file an [Issue](https://github.com/arcanericky/ga-cmd/issues) or [Pull Request](https://github.com/arcanericky/ga-cmd/pulls) to add it.
 
+## Quick Start
+- [Download](https://github.com/arcanericky/ga-cmd/releases) the current release of `ga-cmd`
+- Make it executable: `chmod 755 ga-cmd`
+- Create and populate a `$HOME/.ga-cmd` file: `echo myfavesite=thisismyexamplekey > $HOME/.ga-cmd`
+- Set the configuration file permissions: `chmod 600 $HOME/.ga-cmd`
+- ...and execute: `./ga-cmd myfavesite`
+
 ### Background
 The Google Authentication codes are standardized message authentication codes called HMACs. Read more about them starting at the [Wikipedia page for HMAC](https://en.wikipedia.org/wiki/HMAC). You can find more source code for generating HMACS by searching here on [GitHub for HMAC](https://github.com/search?q=hmac "GitHub: HMAC"). This project was done for the fun of bending Google's PAM code to generate an HMAC.
 
