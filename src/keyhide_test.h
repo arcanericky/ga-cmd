@@ -1,0 +1,1 @@
+int TEST_hide_and_reveal_key();
