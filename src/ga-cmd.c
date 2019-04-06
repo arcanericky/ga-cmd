@@ -22,7 +22,7 @@ char key_from_compile[] = { HMACKEY };
 
 if (!version_option(argc, argv, VERSION, stdout))
     {
-    exitcode = output_code_from_args(argc, argv, key_from_compile, stdout, get_config_filename);
+    exitcode = output_code_from_args(argc, argv, key_from_compile, stdout, NULL, NULL, NULL);
     }
 
 return exitcode;

@@ -29,14 +29,14 @@ else
 		char *tag;
 		char *key;
 
-		// Trim newline
+		/* Trim newline */
 		buflen = strlen(linebuf) - 1;
 		if (linebuf[buflen] == '\n')
 			{
 			linebuf[buflen] = '\0';
 			}
 
-		// Skip long lines
+		/* Skip long lines */
 		if (strlen(linebuf) == sizeof(linebuf) - 1)
 			{
 			char *retcode;

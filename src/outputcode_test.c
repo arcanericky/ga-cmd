@@ -22,6 +22,19 @@ strcpy(fn, fname);
 return fn;
 }
 
+int
+lkbt_test(char *argv, char *filename, char *key, int key_size)
+{
+return -1;
+}
+
+int
+vk_test(char *key)
+{
+return -1;
+}
+
+
 /*-----------------------------------------------------------------*/
 int
 TEST_output_code_from_args()
@@ -50,21 +63,21 @@ int exit_code = 0;
 FILE *output = fopen("/dev/null", "w");;
 
 /* Key specified on command line. No compiled key. No config file. */
-if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 		{
 	show_test_result(1, "output_code_from_args(<CLI key, no compiled key, no config file>");
 	exit_code = 1;
 }
 
 /* No key on command line. Compiled key. No config file. */
-if (output_code_from_args(1, args, obscured_key, output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(1, args, obscured_key, output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 	{
 	show_test_result(1, "output_code_from_args(<no CLI key, compiled key, no config file>");
 	exit_code = 1;
 	}
 
 /* No key on command line. No compiled key. No config file. */
-if (output_code_from_args(1, args, "", output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(1, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 	{
 	show_test_result(1, "output_code_from_args(<no CLI key, no compiled key, no config file>");
 	exit_code = 1;
@@ -75,7 +88,7 @@ saved_umask = umask(007);
 fn = gcf_test("");
 fp = fopen(fn, "w");
 if (fp != NULL) fclose(fp);
-if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 	{
 	show_test_result(1, "output_code_from_args(<bad perms>");
 	exit_code = 1;
@@ -94,7 +107,7 @@ umask(saved_umask);
 
 /* Retrieval of good key */
 args[1] = "favesite";
-if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_SUCCESS)
+if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_SUCCESS)
 	{
 	show_test_result(1, "output_code_from_args(<favesite>)");
 	exit_code = 1;
@@ -102,7 +115,7 @@ if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_SUCCESS)
 
 /* Bad key contents */
 args[1] = "badcontent";
-if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 	{
 	show_test_result(1, "output_code_from_args(<badcontent>)");
 	exit_code = 1;
@@ -110,7 +123,7 @@ if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
 
 /* Bad key length */
 args[1] = "invalidlongentry";
-if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
+if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
 	{
 	show_test_result(1, "output_code_from_args(<CLI key, no compiled key, config file, long entry>");
 	exit_code = 1;
@@ -118,6 +131,21 @@ if (output_code_from_args(2, args, "", output, gcf_test) != EXIT_FAILURE)
 
 /* Bad key content */
 /* Not testable */
+
+/* load_key_by_tag() returns invalid error code */
+if (output_code_from_args(2, args, "", output, NULL, lkbt_test, NULL) != EXIT_FAILURE)
+{
+	show_test_result(1, "output_code_from_args should return EXIT_FAILURE on invalid error code from load_key_by_tag");
+	exit_code = 1;
+}
+
+/* verf_key() returns invalid error code */
+args[1] = "favesite";
+if (output_code_from_args(2, args, "", output, NULL, NULL, vk_test) != EXIT_FAILURE)
+{
+	show_test_result(1, "output_code_from_args should return EXIT_FAILURE on invalid error code from verf_key");
+	exit_code = 1;
+}
 
 remove(fn);
 free(fn);
