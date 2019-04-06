@@ -21,7 +21,7 @@ Ever try to sign onto Google only to be asked for a verification code? You sigh 
 The extremely small application is built by leveraging the [Google Authenticator PAM Module](https://github.com/google/google-authenticator-libpam) source itself. The build script takes your authenticator key, slightly obfuscates it, then creates an executable that can be used to output your 6 digit verification code every time it is executed.
 
 ## Compatibility
-This application outputs HMAC codes. These are compatible with a number of services include [**Google**](https://accounts.google.com/signin), [**GitHub**](https://github.com/login), [**Dropbox**](https://www.dropbox.com/en_GB/login), [**AWS**](https://aws.amazon.com/marketplace/management/signin), and probably any other service that implements HMAC codes. If you use this application for a service not listed here, please let me know or file an [Issue](https://github.com/arcanericky/ga-cmd/issues) or [Pull Request](https://github.com/arcanericky/ga-cmd/pulls) to add it.
+This application outputs TOTP codes. These are compatible with a number of services include [**Google**](https://accounts.google.com/signin), [**GitHub**](https://github.com/login), [**Dropbox**](https://www.dropbox.com/en_GB/login), [**AWS**](https://aws.amazon.com/marketplace/management/signin), and probably any other service that implements TOTP codes. If you use this application for a service not listed here, please let me know or file an [Issue](https://github.com/arcanericky/ga-cmd/issues) or [Pull Request](https://github.com/arcanericky/ga-cmd/pulls) to add it.
 
 ## Quick Start
 - [Download](https://github.com/arcanericky/ga-cmd/releases) the current release of `ga-cmd`
@@ -31,43 +31,10 @@ This application outputs HMAC codes. These are compatible with a number of servi
 - ...and execute: `./ga-cmd myfavesite`
 
 ### Background
-These authentication codes are standardized message authentication codes derived from the Time-based One-Time Password algorithm (TOTP). Read more about them starting at the [Wikipedia page for TOTP](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm). You can find more source code for generating HMACS by searching here on [GitHub for TOTP](https://github.com/search?q=totp). This project initially started for the fun of bending Google's PAM code to generate a TOTP code.
-
-### Building
-
-**Warning: If you build this application with an internal key, protect the executable and don't distribute it. It contains your authentication key which must be kept private (though it's loosely obscured), and anyone that can execute the application can use your verification codes.**
-
-The git repository contains submodules. Clone this repo then setup the submodules with:
-```
-$ git clone https://github.com/arcanericky/ga-cmd.git
-$ cd ga-cmd
-$ git submodule update --init --recursive
-```
-Install the PAM development library. On Ubuntu do this with:
-```
-$ sudo apt-get install -y libpam0g-dev
-```
-**Optional**: If you want to generate code coverage reports using the makefile `coverage` target, install [gcovr](http://www.gcovr.com).
-```
-$ sudo apt-get install -y gcovr
-```
-Once you've done this, switch into the `src` directory and execute `build.sh`. If you want the application to contain a single internal key for a single service, specify the key on the command line. Otherwise, just execute `build.sh` and use the external configuration file.
-
-Building without an internal key:
-```
-$ cd src
-$ ./build.sh
-```
-Building with an internal key:
-```
-$ cd src
-$ ./build.sh <16 to 64 character key>
-```
-
-The source will compile, test routines are built and verified, then the `ga-cmd` is built and deposited at `bin/ga-cmd`.
+These authentication codes are standardized message authentication codes derived from the Time-based One-Time Password algorithm (TOTP). Read more about them starting at the [Wikipedia page for TOTP](https://en.wikipedia.org/wiki/Time-based_One-time_Password_algorithm). You can find more source code for generating TOTPs by searching here on [GitHub for TOTP](https://github.com/search?q=totp). This project initially started for the fun of bending Google's PAM code to generate a TOTP code.
 
 ### Configuration File
-Multiple keys can be added, removed, and changed through a configuration file that resides at `$HOME/.ga-cmd`. The format is one key per line, each line containing the key name followed by `=` followed by the key. No spaces around the `=`. The general format is:
+Multiple keys can be managed through a configuration file that resides at `$HOME/.ga-cmd`. The format is one key per line, each line containing the key name followed by `=` followed by the key. No spaces around the `=`. The general format is:
 ```
 name=key
 ```
@@ -102,10 +69,43 @@ $ bin/ga-cmd GITHUB
 Could not find key for GITHUB in /home/username/.ga-cmd.
 ```
 
-Check the verification code against whichever application you normally used to generate HMAC codes, such as [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) or [Authy](https://authy.com/). If it's wrong, check the time on your computer (it's used to calculate the verification code). If the time on the computer doesn't match the time on your phone, sync them and try again. If it still doesn't work, odds are you entered an incorrect key when you ran `build.sh`.
+Check the verification code against whichever application you normally used to generate TOTP codes, such as [Google Authenticator](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2) or [Authy](https://authy.com/). If it's wrong, check the time on your computer (it's used to calculate the verification code). If the time on the computer doesn't match the time on your phone, sync them and try again. If it still doesn't work, odds are you entered an incorrect key when you ran `build.sh`.
 
 Even better, pipe the output to a clipboard utility such as `xclip` and paste the result into the verification code entry box.
 ```
 $ bin/ga-cmd | xclip -sel clipboard
 ```
 Obviously, that's a decent amount of typing so you'd want to script it so you can step through the whole dance by just clicking your mouse.
+
+### Building
+
+**Warning: If you build this application with an internal key, protect the executable and don't distribute it. It contains your authentication key which must be kept private (though it's loosely obscured), and anyone that can execute the application can use your verification codes.**
+
+The git repository contains submodules. Clone this repo then setup the submodules with:
+```
+$ git clone https://github.com/arcanericky/ga-cmd.git
+$ cd ga-cmd
+$ git submodule update --init --recursive
+```
+Install the PAM development library. On Ubuntu do this with:
+```
+$ sudo apt-get install -y libpam0g-dev
+```
+**Optional**: If you want to generate code coverage reports using the makefile `coverage` target, install [gcovr](http://www.gcovr.com).
+```
+$ sudo apt-get install -y gcovr
+```
+Once you've done this, switch into the `src` directory and execute `build.sh`. If you want the application to contain a single internal key for a single service, specify the key on the command line. Otherwise, just execute `build.sh` and use the external configuration file.
+
+Building without an internal key:
+```
+$ cd src
+$ ./build.sh
+```
+Building with an internal key:
+```
+$ cd src
+$ ./build.sh <16 to 64 character key>
+```
+
+The source will compile, test routines are built and verified, then the `ga-cmd` is built and deposited at `bin/ga-cmd`.
