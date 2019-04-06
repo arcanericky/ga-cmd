@@ -43,7 +43,8 @@ free(fn);
 return result;
 }
 
-int TEST_load_key_by_tag()
+int
+TEST_load_key_by_tag()
 {
 char *key_filename = "testkeyfile";
 char *expected_key;
@@ -238,8 +239,31 @@ remove(key_filename);
 return exit_code;
 }
 
-// int
-// main()
-// {
-// return TEST_load_key_by_tag();
-// }
+/*-----------------------------------------------------------------*/
+int
+TEST_proc_file()
+{
+int exit_code = 0;
+int retval;
+FILE *fp;
+
+fp = fopen("/dev/null", "r");
+if (fp == NULL)
+    {
+    exit_code = 1;
+    }
+else
+{
+    fp->_fileno = -1;
+    retval = proc_file(NULL, fp, NULL, 0);
+    if (retval != CFG_INVALID_FILE_PERMS)
+        {
+        show_fail_result("failed fstat() in proc_file should return CFG_INVALID_FILE_PERMS");
+        exit_code = 1;
+        }
+
+    fclose(fp);
+}
+
+return exit_code;
+}
