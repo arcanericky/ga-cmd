@@ -33,6 +33,7 @@ struct test_routine test_routines[] = {
 	{ TEST_gen_verf_code, "TEST_gen_verf_code" },
 	{ TEST_hide_and_reveal_key, "TEST_hide_and_reveal_key" },
 	{ TEST_get_config_filename, "TEST_get_config_filename" },
+	{ TEST_proc_file, "TEST_proc_file" },
 	{ TEST_load_key_by_tag, "TEST_load_key_by_tag" },
 	{ TEST_key_verf, "TEST_key_verf" },
 	{ TEST_pam_overrides, "TEST_pam_overrides" },
