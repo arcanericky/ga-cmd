@@ -13,9 +13,9 @@
 
 /*-----------------------------------------------------------------*/
 int
-output_code_from_args(int argc, char *argv[], char *key_from_compile, FILE *output, char *(*gcf)(char *))
+output_code_from_args(int argc, char *argv[], char *key_from_compile, FILE *output, get_config_filename_handler gcf, load_key_by_tag_handler lkbt, verf_key_handler vk)
 {
-// 64 characters + null terminator
+/* 64 characters + null terminator */
 char key_from_file[65];
 char *key;
 int verf_code;
@@ -23,12 +23,27 @@ int retval;
 int exitcode;
 char *config_filename;
 
+if (gcf == NULL)
+	{
+	gcf = get_config_filename;
+	}
+
+if (lkbt == NULL)
+	{
+	lkbt = load_key_by_tag;
+	}
+
+if (vk == NULL)
+	{
+	vk = verf_key;
+	}
+
 reveal_key(key_from_compile);
 
 if (argc == 2)
 	{
 	config_filename = gcf(".ga-cmd");
-	retval = load_key_by_tag(argv[1], config_filename, key_from_file, sizeof(key_from_file));
+	retval = lkbt(argv[1], config_filename, key_from_file, sizeof(key_from_file));
 
 	if (retval == CFG_KEY_RETRIEVED)
 		{
@@ -70,7 +85,7 @@ else
 
 if (key != NULL)
 	{
-	switch (verf_key(key))
+	switch (vk(key))
 		{
 		case VERF_OK:
 			verf_code = gen_verf_code(key, time(0) / 30);
