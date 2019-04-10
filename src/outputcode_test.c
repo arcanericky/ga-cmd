@@ -6,6 +6,7 @@
 #include <sys/types.h>
 
 #include "ga-test.h"
+#include "cfgfile.h"
 #include "outputcode.h"
 #include "outputcode_test.h"
 
@@ -23,7 +24,7 @@ return fn;
 }
 
 int
-lkbt_test(char *argv, char *filename, char *key, int key_size)
+pkf_test(char *filename, cfg_file_key_handler service, void *user_data)
 {
 return -1;
 }
@@ -133,7 +134,7 @@ if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAI
 /* Not testable */
 
 /* load_key_by_tag() returns invalid error code */
-if (output_code_from_args(2, args, "", output, NULL, lkbt_test, NULL) != EXIT_FAILURE)
+if (output_code_from_args(2, args, "", output, NULL, pkf_test, NULL) != EXIT_FAILURE)
 {
 	show_test_result(1, "output_code_from_args should return EXIT_FAILURE on invalid error code from load_key_by_tag");
 	exit_code = 1;

@@ -20,7 +20,42 @@ char *test_data =
     "favesite=6543210987654321\n"
     "\n"
     ;
-    
+
+typedef struct
+{
+char *requested_tag;
+char found_key[65];
+} cfgfile_callback_data_test;
+
+int
+cfg_file_key_service_test(char *tag, char *key, void *user_data)
+{
+int result = 0;
+static int lookup_status = CFG_KEY_NOT_FOUND;
+
+if (tag == NULL && key == NULL)
+    {
+    /* EOF / Final Call */
+    result = lookup_status;
+    lookup_status = CFG_KEY_NOT_FOUND;
+    }
+else
+    {
+    if (((cfgfile_callback_data_test *) user_data)->requested_tag == NULL
+       || strlen(((cfgfile_callback_data_test *) user_data)->requested_tag) == 0
+       || strcmp(tag, ((cfgfile_callback_data_test *) user_data)->requested_tag) == 0)
+       {
+      lookup_status = CFG_KEY_FOUND;
+      strncpy(((cfgfile_callback_data_test *) user_data)->found_key, key, sizeof(((cfgfile_callback_data_test *) user_data)->found_key));
+
+      /* Caller exit read loop */
+      result = -1;
+      }
+    }
+
+return result;
+}
+
 void
 show_fail_result(char *display_text)
 {
@@ -43,53 +78,27 @@ free(fn);
 return result;
 }
 
-int
-TEST_load_key_by_tag()
+int TEST_parse_key_file()
 {
 char *key_filename = "testkeyfile";
 char *expected_key;
-char *requested_key;
 FILE *fp;
 int expected_result;
 int actual_result;
 int exit_code = 0;
 mode_t saved_umask;
 char output[1024];
-char keybuf[1024];
+cfgfile_callback_data_test ccd;
 
 remove(key_filename);
 
-/* Invalid buffer */
-expected_result = CFG_MISC_ERROR;
-actual_result = load_key_by_tag("", key_filename, NULL, sizeof(keybuf));
-if (expected_result != actual_result)
-    {
-    snprintf(output, sizeof(output),
-        "load_key_by_tag(<NULL buffer>). Expected: %d. Actual: %d.",
-        expected_result, actual_result);
-    show_fail_result(output);
-    exit_code = 1;
-    }
-
-/* Short buffer */
-expected_result = CFG_MISC_ERROR;
-actual_result = load_key_by_tag("", key_filename, keybuf, 64);
-if (expected_result != actual_result)
-    {
-    snprintf(output, sizeof(output),
-        "load_key_by_tag(<short buffer>). Expected: %d. Actual: %d.",
-        expected_result, actual_result);
-    show_fail_result(output);
-    exit_code = 1;
-    }
-
 /* No file */
 expected_result = CFG_FILE_OPEN_ERROR;
-actual_result = load_key_by_tag("", key_filename, keybuf, sizeof(keybuf));
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
 if (expected_result != actual_result)
     {
     snprintf(output, sizeof(output),
-        "load_key_by_tag(<file does not exist>). Expected: %d. Actual: %d.",
+        "parse_key_file(<file does not exist>). Expected: %d. Actual: %d.",
         expected_result, actual_result);
     show_fail_result(output);
     exit_code = 1;
@@ -100,12 +109,12 @@ saved_umask = umask(007);
 fp = fopen(key_filename, "w");
 if (fp != NULL) fclose(fp);
 expected_result = CFG_INVALID_FILE_PERMS;
-actual_result = load_key_by_tag("", key_filename, keybuf, sizeof(keybuf));
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
 remove(key_filename);
 if (expected_result != actual_result)
     {
     snprintf(output, sizeof(output),
-        "load_key_by_tag(<bad group perms>). Expected: %d. Actual: %d.",
+        "parse_key_file(<bad group perms>). Expected: %d. Actual: %d.",
         expected_result, actual_result);
     show_fail_result(output);
     exit_code = 1;
@@ -116,12 +125,12 @@ umask(070);
 fp = fopen(key_filename, "w");
 if (fp != NULL) fclose(fp);
 expected_result = CFG_INVALID_FILE_PERMS;
-actual_result = load_key_by_tag("", key_filename, keybuf, sizeof(keybuf));
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
 remove(key_filename);
 if (expected_result != actual_result)
     {
     snprintf(output, sizeof(output),
-        "load_key_by_tag(<bad world perms>). Expected: %d. Actual: %d.",
+        "parse_key_file(<bad world perms>). Expected: %d. Actual: %d.",
         expected_result, actual_result);
     show_fail_result(output);
     exit_code = 1;
@@ -131,13 +140,13 @@ if (expected_result != actual_result)
 umask(077);
 fp = fopen(key_filename, "w");
 if (fp != NULL) fclose(fp);
-expected_result = CFG_MISC_ERROR;
-actual_result = load_key_by_tag("", key_filename, keybuf, sizeof(keybuf));
+expected_result = CFG_KEY_NOT_FOUND;
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
 remove(key_filename);
 if (expected_result != actual_result)
     {
     snprintf(output, sizeof(output),
-        "load_key_by_tag(<bad world perms>). Expected: %d. Actual: %d.",
+        "parse_key_file(<Empty config file>). Expected: %d. Actual: %d.",
         expected_result, actual_result);
     show_fail_result(output);
     exit_code = 1;
@@ -153,83 +162,76 @@ if (fp != NULL)
 umask(saved_umask);
 
 /* load default on empty string (first line in data file) */
+ccd.requested_tag = "";
 expected_key = "1234567890123456";
-actual_result = load_key_by_tag("", key_filename, keybuf, sizeof(keybuf));
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
+if (strncmp(ccd.found_key, expected_key, sizeof(ccd.found_key)) != 0)
     {
     snprintf(output, sizeof(output),
         "Default Empty Key. Expected: %s, Actual: %s\n",
-        expected_key, keybuf);
+        expected_key, ccd.found_key);
     show_fail_result(output);
     exit_code = 1;
     }
 
 /* load default on NULL string (first line in data file) */
 expected_key = "1234567890123456";
-actual_result = load_key_by_tag(NULL, key_filename, keybuf, sizeof(keybuf));
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
+if (strncmp(ccd.found_key, expected_key, sizeof(ccd.found_key)) != 0)
     {
     snprintf(output, sizeof(output),
         "Default NULL Key. Expected: %s, Actual: %s\n",
-        expected_key, keybuf);
+        expected_key, ccd.found_key);
     show_fail_result(output);
     exit_code = 1;
     }
 
 /* key exists */
-requested_key = "bigcorporation";
-expected_result = CFG_KEY_RETRIEVED;
+ccd.requested_tag = "bigcorporation";
+expected_result = CFG_KEY_FOUND;
 expected_key = "2345678901234567";
-actual_result = load_key_by_tag(requested_key, key_filename, keybuf, sizeof(keybuf));
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
+if (strncmp(ccd.found_key, expected_key, sizeof(ccd.found_key)) != 0)
     {
     snprintf(output, sizeof(output),
-        "Load %s Key. Expected: %s, Actual: %s\n", requested_key, expected_key, keybuf);
+        "Load %s Key. Expected: %s, Actual: %s\n", ccd.requested_tag, expected_key, ccd.found_key);
     show_fail_result(output);
     exit_code = 1;
     }
 
 /* Key does not exit*/
-requested_key = "keydoesnotexist";
-expected_result = CFG_MISC_ERROR;
+ccd.requested_tag = "keydoesnotexist";
+expected_result = CFG_KEY_NOT_FOUND;
 expected_key = "";
-actual_result = load_key_by_tag(requested_key, key_filename, keybuf, sizeof(keybuf));
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
 if (expected_result != actual_result)
     {
     snprintf(output, sizeof(output),
-        "Load %s Key. Expected: %d, Actual: %d\n", requested_key, expected_result, actual_result);
-    show_fail_result(output);
-    exit_code = 1;
-    }
-
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
-    {
-    snprintf(output, sizeof(output),
-        "Load %s Key. Expected: %s, Actual: %s\n", requested_key, expected_key, keybuf);
+        "Load %s Key. Expected: %d, Actual: %d\n", ccd.requested_tag, expected_result, actual_result);
     show_fail_result(output);
     exit_code = 1;
     }
 
 /* Last entry */
-requested_key = "favesite";
+ccd.requested_tag = "favesite";
 expected_key = "6543210987654321";
-actual_result = load_key_by_tag(requested_key, key_filename, keybuf, sizeof(keybuf));
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
+if (strncmp(ccd.found_key, expected_key, sizeof(ccd.found_key)) != 0)
     {
     snprintf(output, sizeof(output),
-        "Load %s Key. Expected: %s, Actual: %s\n", requested_key, expected_key, keybuf);
+        "Load %s Key. Expected: %s, Actual: %s\n", ccd.requested_tag, expected_key, ccd.found_key);
     show_fail_result(output);
     exit_code = 1;
     }
 
 /* 64 byte key */
-requested_key = "longentry";
+ccd.requested_tag = "longentry";
 expected_key = "00000000000000000000000000000000000000000000000000000000000000000";
-actual_result = load_key_by_tag(requested_key, key_filename, keybuf, sizeof(keybuf));
-if (strncmp(keybuf, expected_key, sizeof(keybuf)) != 0)
+actual_result = parse_key_file(key_filename, cfg_file_key_service_test, &ccd);
+if (strncmp(ccd.found_key, expected_key, sizeof(ccd.found_key)) != 0)
     {
     snprintf(output, sizeof(output),
-        "Load %s Key. Expected: %s, Actual: %s\n", requested_key, expected_key, keybuf);
+        "Load %s Key. Expected: %s, Actual: %s\n", ccd.requested_tag, expected_key, ccd.found_key);
     show_fail_result(output);
     exit_code = 1;
     }
@@ -255,7 +257,7 @@ if (fp == NULL)
 else
 {
     fp->_fileno = -1;
-    retval = proc_file(NULL, fp, NULL, 0);
+    retval = proc_file(fp, NULL, 0);
     if (retval != CFG_INVALID_FILE_PERMS)
         {
         show_fail_result("failed fstat() in proc_file should return CFG_INVALID_FILE_PERMS");
