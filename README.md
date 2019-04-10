@@ -77,6 +77,53 @@ $ bin/ga-cmd | xclip -sel clipboard
 ```
 Obviously, that's a decent amount of typing so you'd want to script it so you can step through the whole dance by just clicking your mouse.
 
+### Command Line Flags
+
+Two command line flags are supported
+
+#### Version
+
+Use the `--version` or `-v` flag to show the version of `ga-cmd`. This is useful for version validation and bug reporting. Example:
+```
+$ ga-cmd --version
+ga-cmd version 1.0.0
+```
+
+#### List Tags
+Use the `--list` or `-l` flag to list the key names (tags) in the configuration file. Example:
+```
+$ ga-cmd --list
+myfavesite
+mysocialsite
+myfinancialsite
+```
+
+### Bash Completion
+
+Bash completions can be performed on the command line with the Bash completion script `ga-cmd-completion.sh`. Example:
+```
+$ ga-cmd <tab><tab>
+myfavesite myfinancialsite mysocialsite
+$ ga-cmd myf<tab><tab>
+myfavesite myfinancialsite
+```
+
+And using
+```
+$ ga-cmd mys<tab><tab>
+```
+will autocomplete to
+```
+$ ga-cmd mysocialsite
+```
+
+To enable Bash completion, before executing `ga-cmd` use
+```
+source ga-cmd-completion.sh
+```
+
+Or to enable Bash completion for all future terminals add the above to your `.bashrc` file.
+
 ### Building
 
 **Warning: If you build this application with an internal key, protect the executable and don't distribute it. It contains your authentication key which must be kept private (though it's loosely obscured), and anyone that can execute the application can use your verification codes.**
