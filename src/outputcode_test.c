@@ -61,7 +61,7 @@ char *args[] = { "test", "favesite" };
 char obscured_key[] = "0x64,0x67,0x66,0x61,0x60,0x63,0x62,0x6D,0x6C,0x65,0x64,0x67,"
 	"0x66,0x61,0x60,0x63,0x00";
 int exit_code = 0;
-FILE *output = fopen("/dev/null", "w");;
+FILE *output = fopen("/dev/null", "w");
 
 /* Key specified on command line. No compiled key. No config file. */
 if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
@@ -148,6 +148,7 @@ if (output_code_from_args(2, args, "", output, NULL, NULL, vk_test) != EXIT_FAIL
 	exit_code = 1;
 }
 
+fclose(output);
 remove(fn);
 free(fn);
 

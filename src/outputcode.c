@@ -22,7 +22,6 @@ switch (verf_key(key))
 	case VERF_OK:
 		verf_code = gen_verf_code(key, time(0) / 30);
 		fprintf(output, "%6.6d\n", verf_code);
-
 		exit_code = EXIT_SUCCESS;
 	break;
 	case VERF_BAD_LEN:

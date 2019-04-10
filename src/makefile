@@ -1,9 +1,9 @@
 GA=google-authenticator-libpam
 GA_SRC=$(GA)/src
 GA_OBJS=hmac.o sha1.o base32.o pam_google_authenticator.o util.o
-OBJS=keyhide.o verf.o codegen.o cfgfile.o outputcode.o version.o
-SRCS=keyhide.c verf.c codegen.c cfgfile.c outputcode.c version.c
-OBJS_TEST=ga-test.o cfgfile_test.o version_test.o keyhide_test.o verf_test.o codegen_test.o outputcode_test.o
+OBJS=keyhide.o verf.o codegen.o cfgfile.o outputcode.o cliflags.o
+SRCS=keyhide.c verf.c codegen.c cfgfile.c outputcode.c cliflags.c
+OBJS_TEST=ga-test.o cfgfile_test.o cliflags_test.o keyhide_test.o verf_test.o codegen_test.o outputcode_test.o
 
 .SUFFIXES:
 

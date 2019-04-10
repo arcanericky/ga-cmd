@@ -6,7 +6,7 @@
 #include "keyhide_test.h"
 #include "outputcode_test.h"
 #include "verf_test.h"
-#include "version_test.h"
+#include "cliflags_test.h"
 
 /*-----------------------------------------------------------------*/
 void
@@ -38,7 +38,7 @@ struct test_routine test_routines[] = {
 	{ TEST_key_verf, "TEST_key_verf" },
 	{ TEST_pam_overrides, "TEST_pam_overrides" },
 	{ TEST_output_code_from_args, "TEST_output_code_from_args" },
-	{ TEST_version_option, "TEST_version_option" },
+	{ TEST_proc_cli_flags, "TEST_proc_cli_flags" },
 	{ NULL, NULL }
 };
 
