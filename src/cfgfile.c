@@ -9,7 +9,7 @@
 
 /*-----------------------------------------------------------------*/
 int
-proc_file(char *tag_request, FILE *fp, char *keybuf, int keybuf_len)
+proc_file(FILE *fp, cfg_file_key_handler cfk_service, void *user_data)
 {
 char linebuf[1024];
 int result;
@@ -21,7 +21,7 @@ if (fstat(fileno(fp), &s) || s.st_mode & (S_IRWXO | S_IRWXG))
 	}
 else
 	{
-	result = CFG_MISC_ERROR;
+	result = CFG_KEY_NOT_FOUND;
 
 	while (fgets(linebuf, sizeof(linebuf), fp) != NULL)
 		{
@@ -53,53 +53,45 @@ else
 
 			if (tag != NULL && key != NULL)
 				{
-				if (tag_request == NULL
-					|| strlen(tag_request) == 0
-					|| strcmp(tag, tag_request) == 0)
+				result = cfk_service(tag, key, user_data);
+
+				if (result < 0)
 					{
-					strncpy(keybuf, key, keybuf_len);
-					result = CFG_KEY_RETRIEVED;
 					break;
 					}
 				}
 			}
 		}
+
+		result = cfk_service(NULL, NULL, user_data);
 	}
 
-	return result;
+return result;
 }
 
 /*-----------------------------------------------------------------*/
 /* Returns:
- * CFG_KEY_RETRIEVED: key retrieved
+ * CFG_KEY_FOUND: key retrieved
+ * CFG_KEY_NOT_FOUND: key not found
  * CFG_MISC_ERROR: misc error
  * CFG_FILE_OPEN_ERROR: file not opened
  * CFG_INVALID_FILE_PERMS: invalid file permissions
  */
 int
-load_key_by_tag(char *tag_request, char *filename, char *keybuf, int keybuf_len)
+parse_key_file(char *filename, cfg_file_key_handler cfk_service, void *user_data)
 {
-int result = CFG_KEY_RETRIEVED;
+int result = CFG_KEY_FOUND;
 FILE *fp;
 
-if (keybuf == NULL || keybuf_len < 65)
+fp = fopen(filename, "r");
+if (!fp)
 	{
-	result = CFG_MISC_ERROR;
+	result = CFG_FILE_OPEN_ERROR;
 	}
 else
 	{
-	*keybuf = '\0';
-
-	fp = fopen(filename, "r");
-	if (!fp)
-		{
-		result = CFG_FILE_OPEN_ERROR;
-		}
-	else
-		{
-		result = proc_file(tag_request, fp, keybuf, keybuf_len);
-		fclose(fp);
-		}
+	result = proc_file(fp, cfk_service, user_data);
+	fclose(fp);
 	}
 
 return result;

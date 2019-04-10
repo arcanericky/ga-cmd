@@ -17,13 +17,13 @@ main(int argc, char *argv[])
 #define VERSION "unknown"
 #endif
 
-int exitcode = 0;
+int exit_code = 0;
 char key_from_compile[] = { HMACKEY };
 
 if (!version_option(argc, argv, VERSION, stdout))
     {
-    exitcode = output_code_from_args(argc, argv, key_from_compile, stdout, NULL, NULL, NULL);
+    exit_code = output_code_from_args(argc, argv, key_from_compile, stdout, NULL, NULL, NULL);
     }
 
-return exitcode;
+return exit_code;
 }
