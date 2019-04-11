@@ -22,7 +22,9 @@ addons:
 deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
-  file: bin/ga-cmd
+  file:
+    - bin/ga-cmd
+    - ga-cmd-completion.sh
   skip_cleanup: true
   draft: true
   on:
