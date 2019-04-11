@@ -14,7 +14,7 @@ char *
 gcf_test(char *basename)
 {
 char *fn;
-char fname[] = "testkeyfile";
+char fname[] = ".ga-cmd";
 
 fn = malloc(sizeof(fname) + 1);
 memset(fn, 0, sizeof(fname) + 1);
@@ -86,7 +86,7 @@ if (output_code_from_args(1, args, "", output, gcf_test, NULL, NULL) != EXIT_FAI
 
 /* Bad file permissions */
 saved_umask = umask(007);
-fn = gcf_test("");
+fn = gcf_test(".ga-cmd" /* arg not used */ );
 fp = fopen(fn, "w");
 if (fp != NULL) fclose(fp);
 if (output_code_from_args(2, args, "", output, gcf_test, NULL, NULL) != EXIT_FAILURE)
@@ -141,7 +141,7 @@ if (output_code_from_args(2, args, "", output, NULL, pkf_test, NULL) != EXIT_FAI
 }
 
 /* verf_key() returns invalid error code */
-args[1] = "favesite";
+args[1] = "badcontent";
 if (output_code_from_args(2, args, "", output, NULL, NULL, vk_test) != EXIT_FAILURE)
 {
 	show_test_result(1, "output_code_from_args should return EXIT_FAILURE on invalid error code from verf_key");
