@@ -14,6 +14,20 @@ $ ga-cmd my-fave-site
 654321
 ```
 
+## The Better Alternative
+
+If you're using this repository for the compiled releases to generate TOTP codes you should instead be using [my TOTP utility](https://github.com/arcanericky/totp) written in Go. It offers too many improvements to be overlooked and is the utility I personally use. Among these are:
+- Executables for Linux, Windows, and Macintosh (more on request)
+- Support for multiple secrets
+- Command line options to add, delete, update, rename, and list secrets
+- No more manual editing of a configuration file
+- Ad-hoc secret support
+- Bash completion
+- Specify the time used to generate the seed, and/or adjust the current time forward and backward
+- Continuous code output every 30 seconds
+- Streaming of a shared secret collection using stdio
+
+My [TOTP project on GitHub](https://github.com/arcanericky/totp).
 
 ## What It Does
 Ever try to sign onto Google only to be asked for a verification code? You sigh as calculate how many calories it'll take you to grab the phone from the other side of the table, or worse, the need to walk to the other side of the room. This application solves that, giving you access to that verification code from your Linux command line.
