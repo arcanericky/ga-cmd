@@ -54,9 +54,9 @@ name=key
 ```
 An example file would be
 ```
-google=1234567890123456
-github=0011223344556677
-dropbox=99887766554433221100aa
+google=ATLSZSA2YGLVDDBI
+github=6DTUL4FV2FARV6DC
+dropbox=PCBCFH5IG5RPLA7O
 ```
 This configuration file contains your keys which must be kept private. **Do not share this file or its contents.** Because this file contains sensitive information, the application will not use it if the permissions are not restrictive enough and give an error reflecting this. The file should be owner read/write only. Group and Other/World should not have access. A file with proper permissions will look like
 ```
